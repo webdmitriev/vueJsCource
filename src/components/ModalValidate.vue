@@ -1,5 +1,5 @@
 <template>
-  <modal title="Modal with form" @close="$emit('close')">
+  <modal title="Modal with form" @close="$emit('close', resetModal())">
     <!-- body -->
     <div slot="body">
       <form @submit.prevent="onSubmit">
@@ -108,6 +108,13 @@ export default {
         this.$v.$reset();
         this.$emit("close");
       }
+    },
+    resetModal() {
+      this.name = "";
+      this.email = "";
+      this.password = "";
+      this.repeatPassword = "";
+      this.$v.$reset();
     }
   }
 };

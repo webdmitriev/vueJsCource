@@ -38,7 +38,7 @@
             <!-- /body -->
           </modals>
 
-          <!-- modal with validate -->
+          <!-- Validate modal -->
           <button
             class="btn btnPrimary"
             @click="modalValidate = !modalValidate"
