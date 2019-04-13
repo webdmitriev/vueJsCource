@@ -13,6 +13,31 @@
           >Name must have at least {{ $v.name.$params.minLength.min }}</p>
           <input v-model="name" :class="{ error: $v.name.$error}" @change="$v.name.$touch()">
         </div>
+        <!-- Password -->
+        <div class="form-item" :class="{ 'errorInput': $v.password.$error }">
+          <label>Password:</label>
+          <p class="errorText" v-if="!$v.password.required">Введите пароль</p>
+          <p class="errorText" v-if="!$v.password.minLength">
+            Пароль должен быть
+            <b>{{ $v.password.$params.minLength.min }}</b> или более символов
+          </p>
+          <input
+            v-model="$v.password.$model"
+            :class="{ error: $v.password.$error}"
+            @change="$v.password.$touch()"
+          >
+        </div>
+        <!-- Password Сheck -->
+        <div class="form-item" :class="{ 'errorInput': $v.repeatPassword.$error }">
+          <label>Password check:</label>
+          <p class="errorText" v-if="!$v.repeatPassword.required">Повторите пароль</p>
+          <p class="errorText" v-if="this.password == this.repeatPassword">Пароли не совпадают!</p>
+          <input
+            v-model="$v.repeatPassword.$model"
+            :class="{ error: $v.repeatPassword.$error}"
+            @change="$v.repeatPassword.$touch()"
+          >
+        </div>
         <!-- Email -->
         <div class="form-item" :class="{ 'errorInput': $v.email.$error }">
           <label>Email:</label>
@@ -29,7 +54,7 @@
 </template>
 
 <script>
-import { required, minLength, email } from "vuelidate/lib/validators";
+import { required, minLength, email, sameAs } from "vuelidate/lib/validators";
 
 import modal from "@/components/UI/Modal.vue";
 export default {
@@ -39,6 +64,9 @@ export default {
   data() {
     return {
       name: "",
+      password: "",
+      repeatPassword: "",
+      check: true,
       email: ""
     };
   },
@@ -50,6 +78,14 @@ export default {
     email: {
       required,
       email
+    },
+    password: {
+      required,
+      minLength: minLength(6)
+    },
+    repeatPassword: {
+      required,
+      sameAsPassword: sameAs("password")
     }
   },
   methods: {
@@ -58,13 +94,17 @@ export default {
       if (!this.$v.$invalid) {
         const user = {
           name: this.name,
-          email: this.email
+          email: this.email,
+          password: this.password,
+          repeatPassword: this.repeatPassword
         };
         console.log(user);
 
         // Done!
         this.name = "";
         this.email = "";
+        this.password = "";
+        this.repeatPassword = "";
         this.$v.$reset();
         this.$emit("close");
       }
